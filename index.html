@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jindharma – जिनधर्म</title>
+<meta name="description" content="Interactive study material on Jain Dharma from Digambar sources, in English and Hindi.">
+<style>
+:root{--bg:#fbf7ef;--surface:#fff;--ink:#2a2118;--muted:#6d5f50;--line:#e4d9c6;--accent:#b8470c;--accent-soft:#fbe5d3;--shadow:0 1px 3px rgba(60,40,10,.10)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17120d;--surface:#221b14;--ink:#f1e8da;--muted:#b3a48f;--line:#3b3024;--accent:#f08a4b;--accent-soft:#3a2415;--shadow:none}}
+:root[data-theme="dark"]{--bg:#17120d;--surface:#221b14;--ink:#f1e8da;--muted:#b3a48f;--line:#3b3024;--accent:#f08a4b;--accent-soft:#3a2415;--shadow:none}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);line-height:1.55;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Devanagari","Kohinoor Devanagari","Devanagari Sangam MN","Nirmala UI",sans-serif}
+.wrap{max-width:900px;margin:0 auto;padding:0 16px 64px}
+.topbar{display:flex;justify-content:flex-end;gap:6px;padding-top:10px}
+.topbar button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:20px;padding:6px 12px;cursor:pointer;font:inherit;font-size:13px}
+.topbar button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+header{text-align:center;padding:28px 0 22px}
+.om{font-size:44px;color:var(--accent);line-height:1}
+h1{margin:6px 0 4px;font-size:clamp(28px,6vw,42px);letter-spacing:-.01em}
+header p{margin:0;color:var(--muted);max-width:560px;margin-inline:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.card{display:block;text-decoration:none;color:inherit;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow);transition:.15s}
+a.card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.card h2{margin:0 0 2px;font-size:19px}
+.card .sub{color:var(--muted);font-size:14px;margin:0 0 8px}
+.card p{margin:0;font-size:14.5px}
+.tag{display:inline-block;margin-top:10px;font-size:12px;font-weight:600;border-radius:10px;padding:2px 10px;background:var(--accent-soft);color:var(--accent)}
+.card.soon{opacity:.6;border-style:dashed}
+.card.soon .tag{background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+footer{margin-top:40px;text-align:center;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar"><button id="bEn">English</button><button id="bHi">हिन्दी</button><button id="bTheme" aria-label="Theme">◐</button></div>
+  <header>
+    <div class="om">ॐ</div>
+    <h1 id="title"></h1>
+    <p id="tag"></p>
+  </header>
+  <div class="grid" id="grid"></div>
+  <footer id="foot"></footer>
+</div>
+<script>
+/* To add a page: create a folder with index.html, then add an entry here.
+   status: 'live' or 'soon' */
+const TOPICS=[
+ {href:'karma-siddhant/',status:'live',
+  en:{t:'Karma Siddhant',s:'कर्म सिद्धांत',d:'The eight karmas step by step with flow charts, and the 14 Gunasthanas.'},
+  hi:{t:'कर्म सिद्धांत',s:'Karma Siddhant',d:'आठ कर्म चरण-दर-चरण, प्रवाह चार्ट सहित, और चौदह गुणस्थान।'}},
+ {status:'soon',
+  en:{t:'Tattvartha Sutra',s:'तत्त्वार्थ सूत्र',d:'The seven tattvas and the path to liberation.'},
+  hi:{t:'तत्त्वार्थ सूत्र',s:'Tattvartha Sutra',d:'सात तत्त्व और मोक्ष का मार्ग।'}}
+];
+const UI={
+ en:{title:'Jindharma · जिनधर्म',tag:'Interactive study material on Jain Dharma, from Digambar sources, in English and Hindi.',live:'Open →',soon:'Coming soon',foot:'More pages will be added over time.'},
+ hi:{title:'जिनधर्म · Jindharma',tag:'जैन धर्म की इंटरैक्टिव अध्ययन सामग्री, दिगंबर आगम-आधारित, हिन्दी और अंग्रेज़ी में।',live:'खोलें →',soon:'जल्द आ रहा है',foot:'समय-समय पर और पृष्ठ जोड़े जाएँगे।'}
+};
+let lang='en';
+try{lang=localStorage.getItem('ks_lang')||((navigator.language||'').startsWith('hi')?'hi':'en')}catch(_){}
+const $=id=>document.getElementById(id);
+function render(){
+  const u=UI[lang];document.documentElement.lang=lang;
+  $('bEn').classList.toggle('on',lang==='en');$('bHi').classList.toggle('on',lang==='hi');
+  $('title').textContent=u.title;$('tag').textContent=u.tag;$('foot').textContent=u.foot;
+  document.title=u.title;
+  $('grid').innerHTML=TOPICS.map(p=>{
+    const x=p[lang],live=p.status==='live';
+    const inner=`<h2>${x.t}</h2><div class="sub">${x.s}</div><p>${x.d}</p><span class="tag">${live?u.live:u.soon}</span>`;
+    return live?`<a class="card" href="${p.href}">${inner}</a>`:`<div class="card soon">${inner}</div>`;
+  }).join('');
+}
+function setLang(l){lang=l;try{localStorage.setItem('ks_lang',l)}catch(_){}render()}
+$('bEn').onclick=()=>setLang('en');$('bHi').onclick=()=>setLang('hi');
+$('bTheme').onclick=()=>{const r=document.documentElement;const d=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches;r.dataset.theme=d?'light':'dark'};
+render();
+</script>
+</body>
+</html>

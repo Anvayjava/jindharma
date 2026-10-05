@@ -1,0 +1,645 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Karma Siddhant – कर्म सिद्धांत</title>
+<style>
+:root{
+  --bg:#fbf7ef; --surface:#ffffff; --ink:#2a2118; --muted:#6d5f50; --line:#e4d9c6;
+  --accent:#b8470c; --accent-soft:#fbe5d3;
+  --ghati:#a8321f; --ghati-soft:#f8dcd6;
+  --aghati:#1f6b73; --aghati-soft:#d6ecee;
+  --good:#2f7d3a; --good-soft:#dcf0de;
+  --gold:#e0a21b; --shadow:0 1px 3px rgba(60,40,10,.10);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#17120d; --surface:#221b14; --ink:#f1e8da; --muted:#b3a48f; --line:#3b3024;
+    --accent:#f08a4b; --accent-soft:#3a2415;
+    --ghati:#f08273; --ghati-soft:#3d1e19;
+    --aghati:#6fc7d0; --aghati-soft:#143034;
+    --good:#7fd08a; --good-soft:#1b3320; --gold:#f2bd47; --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#17120d; --surface:#221b14; --ink:#f1e8da; --muted:#b3a48f; --line:#3b3024;
+  --accent:#f08a4b; --accent-soft:#3a2415;
+  --ghati:#f08273; --ghati-soft:#3d1e19;
+  --aghati:#6fc7d0; --aghati-soft:#143034;
+  --good:#7fd08a; --good-soft:#1b3320; --gold:#f2bd47; --shadow:none;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);line-height:1.55;
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Devanagari","Kohinoor Devanagari","Devanagari Sangam MN","Nirmala UI",sans-serif}
+.wrap{max-width:1000px;margin:0 auto;padding:0 16px 64px}
+header{padding:36px 0 18px;text-align:center}
+header h1{margin:0;font-size:clamp(26px,5vw,38px);letter-spacing:-.01em}
+header p{margin:6px 0 0;color:var(--muted)}
+.topbar{position:absolute;top:10px;right:10px;display:flex;gap:6px;z-index:20}
+.topbar button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:20px;padding:6px 12px;cursor:pointer;font:inherit;font-size:13px}
+.topbar button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+nav{position:sticky;top:0;background:var(--bg);z-index:5;display:flex;gap:6px;overflow-x:auto;padding:10px 0;border-bottom:1px solid var(--line);margin-bottom:8px}
+nav a{white-space:nowrap;text-decoration:none;color:var(--ink);padding:6px 12px;border-radius:16px;font-size:14px;border:1px solid var(--line);background:var(--surface)}
+nav a:hover{border-color:var(--accent);color:var(--accent)}
+section{padding-top:28px;scroll-margin-top:56px}
+h2{font-size:22px;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 16px;font-size:15px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:var(--shadow)}
+.svgwrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px}
+.svgwrap svg{display:block;margin:0 auto;max-width:100%;height:auto}
+
+/* svg theming */
+.sn{fill:var(--surface);stroke:var(--line);stroke-width:1.5;cursor:pointer;transition:.15s}
+.sn:hover{stroke:var(--accent)}
+.sn.acc{fill:var(--accent-soft);stroke:var(--accent)}
+.sn.g{fill:var(--ghati-soft);stroke:var(--ghati)}
+.sn.a{fill:var(--aghati-soft);stroke:var(--aghati)}
+.sn.ok{fill:var(--good-soft);stroke:var(--good)}
+.st{fill:var(--ink);font-size:14px;font-weight:600;pointer-events:none}
+.st2{fill:var(--muted);font-size:12px;pointer-events:none}
+.sl{stroke:var(--accent);stroke-width:2;fill:none}
+.sl.m{stroke:var(--muted);stroke-dasharray:4 4}
+.sarrowhead{fill:var(--accent)}
+
+/* master list */
+.flow{display:flex;flex-direction:column;margin-top:14px}
+.node{border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:12px 14px;cursor:pointer;transition:.15s;scroll-margin-top:60px}
+.node:hover{border-color:var(--accent)}
+.node.open{border-color:var(--accent);background:var(--accent-soft)}
+.node h3{margin:0;font-size:16px;display:flex;justify-content:space-between;gap:8px}
+.node h3 small{font-weight:400;color:var(--muted)}
+.node .more{display:none;margin-top:8px;font-size:14px}
+.node.open .more{display:block}
+.arrow{align-self:center;color:var(--accent);font-size:20px;line-height:1;padding:4px 0}
+.gate{border:1.5px dashed var(--good);background:var(--good-soft);border-radius:10px;padding:10px 14px;font-size:14px;margin:6px 0}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{font-size:12.5px;border:1px solid var(--line);border-radius:12px;padding:2px 10px;background:var(--bg)}
+
+/* explorer */
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:12px}
+.tab{white-space:nowrap;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:7px 12px;cursor:pointer;font:inherit;font-size:14px}
+.tab .n{font-weight:600;margin-right:4px}
+.tab.g{border-left:4px solid var(--ghati)} .tab.a{border-left:4px solid var(--aghati)}
+.tab.on{background:var(--accent-soft);border-color:var(--accent)}
+.khead{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;margin-bottom:4px}
+.khead h3{margin:0;font-size:24px}
+.badge{font-size:12px;border-radius:10px;padding:2px 10px;font-weight:600}
+.badge.g{background:var(--ghati-soft);color:var(--ghati)} .badge.a{background:var(--aghati-soft);color:var(--aghati)}
+.seg{display:inline-flex;border:1.5px solid var(--accent);border-radius:8px;overflow:hidden;margin:8px 0}
+.seg button{border:0;background:transparent;color:var(--accent);padding:6px 14px;cursor:pointer;font:inherit;font-size:14px}
+.seg button.on{background:var(--accent);color:#fff}
+.steps{display:flex;flex-direction:column;margin-top:8px}
+.step{display:none;gap:12px;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);padding:12px 14px;animation:in .25s ease}
+.step.show{display:flex}
+@keyframes in{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.snum{flex:none;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:600;font-size:14px}
+.step h4{margin:0 0 2px;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--accent)}
+.step .body{font-size:15px}
+ul{margin:4px 0 0;padding-left:18px} li{margin:2px 0}
+.sarrow{display:none;align-self:center;color:var(--accent);font-size:18px;line-height:1.1}
+.sarrow.show{display:block}
+.ctrl{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;align-items:center}
+.btn{border:1.5px solid var(--accent);background:var(--accent);color:#fff;border-radius:8px;padding:8px 16px;cursor:pointer;font:inherit;font-size:14px;font-weight:500}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn:disabled{opacity:.4;cursor:default}
+.prog{margin-left:auto;font-size:13px;color:var(--muted)}
+.bar{height:4px;background:var(--line);border-radius:2px;margin-top:12px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .25s}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+.pair div{border-radius:8px;padding:8px 10px;font-size:14px}
+.pair .p{background:var(--good-soft)} .pair .n{background:var(--ghati-soft)}
+.pair b{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+
+/* visual per-karma flow */
+.vf{display:flex;flex-direction:column;align-items:stretch;margin-top:8px}
+.vn{border:1.5px solid var(--line);border-radius:12px;padding:10px 14px;background:var(--surface);font-size:14.5px}
+.vn h5{margin:0 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--accent)}
+.vn.cause{background:var(--ghati-soft);border-color:var(--ghati)}
+.vn.main{background:var(--accent-soft);border-color:var(--accent);text-align:center;font-size:17px}
+.vn.res{background:var(--aghati-soft);border-color:var(--aghati)}
+.vn.shed{background:var(--good-soft);border-color:var(--good)}
+.varrow{align-self:center;color:var(--accent);font-size:22px;line-height:1;padding:3px 0}
+.vmid{display:grid;grid-template-columns:220px 1fr;gap:12px;align-items:center}
+.veilbox{text-align:center}
+.veilbox svg{width:100%;max-width:220px;height:auto}
+.veil{transition:opacity .9s ease}
+.veilbox.off .veil{opacity:0}
+.vchips{display:flex;flex-wrap:wrap;gap:6px}
+.vchips span{border:1px solid var(--accent);background:var(--surface);border-radius:8px;padding:4px 10px;font-size:13.5px}
+
+/* gunasthana */
+.stair{display:flex;align-items:flex-end;gap:4px;height:340px;padding:8px 4px 0}
+.stair button{flex:1;min-width:0;border:1.5px solid var(--line);border-bottom:0;border-radius:8px 8px 0 0;cursor:pointer;color:var(--ink);font:inherit;padding:6px 2px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;transition:.15s}
+.stair button b{font-size:18px}
+.stair button span{font-size:10.5px;line-height:1.15;margin-top:2px;overflow:hidden;max-width:100%;word-break:break-word;text-align:center}
+.stair button.b1{background:var(--ghati-soft)} .stair button.b2{background:var(--accent-soft)} .stair button.b3{background:var(--good-soft)}
+.stair button.on{outline:3px solid var(--accent);outline-offset:-1px;transform:translateY(-4px)}
+.stairwrap{overflow-x:auto}
+.stair{min-width:640px}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:13px;margin:10px 0}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid var(--line)}
+.gdetail h3{margin:0 0 4px;font-size:22px}
+.gdetail .row{margin-top:10px;padding:8px 12px;border-radius:8px;background:var(--bg);font-size:14.5px}
+.gdetail .row b{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--accent)}
+.shreni{margin-top:14px}
+
+/* table */
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:760px;font-size:14px;background:var(--surface)}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--accent-soft);font-size:13px}
+td.g{border-left:4px solid var(--ghati)} td.a{border-left:4px solid var(--aghati)}
+footer{margin-top:36px;color:var(--muted);font-size:13px;text-align:center}
+
+@media(max-width:640px){
+  .pair{grid-template-columns:1fr}
+  .vmid{grid-template-columns:1fr}
+  .topbar{top:6px;right:6px}
+  header{padding-top:48px}
+}
+@media print{.topbar,nav,.ctrl{display:none}.step{display:flex!important}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <button id="bEn">English</button>
+  <button id="bHi">हिन्दी</button>
+  <button id="bTheme" aria-label="Theme">◐</button>
+</div>
+<div class="wrap">
+<header>
+  <p style="margin:0 0 8px"><a href="../" id="homelink" style="color:var(--accent);text-decoration:none;font-size:14px"></a></p>
+  <h1 id="title"></h1>
+  <p id="tag"></p>
+</header>
+<nav id="nav"></nav>
+
+<section id="flow"><h2 id="h1"></h2><p class="sub" id="s1"></p>
+  <div class="svgwrap" id="masterSvg"></div>
+  <div id="bandhchips"></div>
+  <div class="flow" id="masterflow"></div></section>
+
+<section id="tree"><h2 id="h2"></h2><p class="sub" id="s2"></p>
+  <div class="svgwrap" id="treeSvg"></div></section>
+
+<section id="eight"><h2 id="h3"></h2><p class="sub" id="s3"></p>
+  <div class="tabs" id="tabs"></div>
+  <div class="card" id="panel"></div></section>
+
+<section id="guna"><h2 id="h4"></h2><p class="sub" id="s4"></p>
+  <div class="card">
+    <div class="stairwrap"><div class="stair" id="stair"></div></div>
+    <div class="legend" id="legend"></div>
+    <div class="gdetail" id="gdetail"></div>
+    <div class="ctrl"><button class="btn ghost" id="gprev"></button><button class="btn" id="gnext"></button><span class="prog" id="gprog"></span></div>
+  </div>
+  <div class="shreni card" id="shreni" style="margin-top:14px"></div>
+  <div class="tw" style="margin-top:14px"><table id="gtbl"></table></div>
+</section>
+
+<section id="table"><h2 id="h5"></h2><p class="sub" id="s5"></p>
+  <div class="tw"><table id="tbl"></table></div>
+  <h3 id="h6" style="margin:22px 0 4px;font-size:18px"></h3><p class="sub" id="s6"></p>
+  <div class="tw"><table id="tbl2"></table></div></section>
+
+<footer id="foot"></footer>
+</div>
+
+<script>
+/* ---------- helpers ---------- */
+const L=(e,h)=>({e,h});
+let lang='en';
+try{lang=localStorage.getItem('ks_lang')||((navigator.language||'').startsWith('hi')?'hi':'en')}catch(_){}
+const T=o=>o==null?'':(typeof o==='string'?o:(lang==='hi'?o.h:o.e));
+const TL=o=>lang==='hi'?o.h:o.e; // for {e:[],h:[]}
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const ulist=a=>`<ul>${a.map(x=>`<li>${x}</li>`).join('')}</ul>`;
+
+/* ---------- UI strings ---------- */
+const UI={
+ title:L('Karma Siddhant · कर्म सिद्धांत','कर्म सिद्धांत · Karma Siddhant'),
+ tag:L('The Jain theory of karma: how it binds the soul, the eight karmas, and the 14 stages of liberation.','जैन कर्म सिद्धांत: कर्म आत्मा को कैसे बाँधते हैं, आठ कर्म, और मुक्ति के चौदह सोपान।'),
+ nav:[L('1. Master Flow','१. कर्म-प्रवाह'),L('2. Ghati / Aghati','२. घाती / अघाती'),L('3. Eight Karmas','३. आठ कर्म'),L('4. 14 Gunasthanas','४. चौदह गुणस्थान'),L('5. Summary','५. सार तालिका')],
+ h1:L('1. The Journey of Karma','१. कर्म की यात्रा'),
+ s1:L('Tap any box in the chart (or the list below). Karma is subtle matter (karman vargana) that sticks to the soul because of passions and activity.','चार्ट के किसी भी बॉक्स (या नीचे की सूची) को दबाएँ। कर्म सूक्ष्म पुद्गल (कार्मण वर्गणा) है जो कषाय और योग के कारण आत्मा से चिपकता है।'),
+ h2:L('2. Two Families of Karma','२. कर्म के दो वर्ग'),
+ s2:L('Tap a karma in the tree to open its step-by-step chart.','वृक्ष में किसी कर्म को दबाएँ, उसका चरण-दर-चरण चार्ट खुलेगा।'),
+ h3:L('3. The Eight Karmas, Step by Step','३. आठ कर्म, चरण-दर-चरण'),
+ s3:L('Choose a karma, then use Steps (reveal one by one) or Visual Chart (one-page flow).','कर्म चुनें, फिर चरण (एक-एक करके) या दृश्य चार्ट (एक पृष्ठ का प्रवाह) चुनें।'),
+ h4:L('4. The 14 Gunasthanas','४. चौदह गुणस्थान'),
+ s4:L('The 14 stages of spiritual development, from deepest delusion to liberation. Tap a step.','आध्यात्मिक विकास के चौदह सोपान: गहरे मोह से मोक्ष तक। किसी सीढ़ी को दबाएँ।'),
+ h6:L('Satta, Udaya and Bandh counts (Gommatasara)','सत्ता, उदय और बंध की संख्या (गोम्मटसार)'),
+ s6:L('Total 148 prakritis exist in satta, 122 come into udaya, and 120 are bound. Mohaniya bandh is 26 because Samyaktva and Samyagmithyatva are not bound afresh, only formed from Mithyatva. Nama bandh and udaya are 67 because the 5 Bandhanas, 5 Sanghatas and 16 varna-gandha-rasa-sparsha sub-types are counted inside Sharira, Varna, Gandha, Rasa and Sparsha.','सत्ता में कुल 148 प्रकृतियाँ हैं, उदय में 122 और बंध में 120। मोहनीय का बंध 26 है क्योंकि सम्यक्त्व और सम्यग्मिथ्यात्व का नया बंध नहीं होता, वे मिथ्यात्व से बनते हैं। नाम कर्म का बंध और उदय 67 है क्योंकि 5 बंधन, 5 संघात और स्पर्श-रस-गंध-वर्ण के 16 भेद शरीर और वर्णादि में गिन लिए जाते हैं।'),
+ tbl2:[L('Karma','कर्म'),L('Satta','सत्ता'),L('Udaya','उदय'),L('Bandh','बंध')],
+ h5:L('5. Summary Table','५. सार तालिका'),
+ s5:L('Revision sheet. Durations are classical maximum bondage periods (utkrishta sthiti).','पुनरावृत्ति हेतु। अवधि शास्त्रीय उत्कृष्ट स्थिति (अधिकतम बंध काल) है।'),
+ foot:L('Digambar sources only: Tattvartha Sutra (ch. 6 and 8) with Sarvarthasiddhi, and Gommatasara (Jivakanda and Karmakanda). Counts and durations follow these texts (Nama 93, total 148 in satta). Please verify against your own copy of the texts.','केवल दिगंबर आगम-आधारित: तत्त्वार्थ सूत्र (अध्याय 6 और 8) सर्वार्थसिद्धि सहित, और गोम्मटसार (जीवकांड व कर्मकांड)। संख्या और स्थिति इन्हीं ग्रंथों के अनुसार हैं (नाम कर्म 93, सत्ता में कुल 148)। कृपया अपने ग्रंथ से मिलान कर लें।'),
+ ghati:L('Ghati','घाती'), aghati:L('Aghati','अघाती'),
+ ghatiLong:L('Ghati (destructive)','घाती (आत्म-गुण घातक)'), aghatiLong:L('Aghati (non-destructive)','अघाती (गुण-अघातक)'),
+ ghatiD:L('They directly cover or damage the soul\'s own qualities.','ये आत्मा के मूल गुणों को सीधे ढकते या बिगाड़ते हैं।'),
+ aghatiD:L('They decide the body and circumstances of this life. They fall away after the Ghati karmas are destroyed.','ये इस जीवन का शरीर और परिस्थितियाँ तय करते हैं। घाती कर्मों के क्षय के बाद ये झड़ते हैं।'),
+ root:L('8 Karmas','आठ कर्म'),
+ modeSteps:L('Steps','चरण'), modeVis:L('Visual Chart','दृश्य चार्ट'),
+ back:L('← Back','← पीछे'), next:L('Next step →','अगला चरण →'), all:L('Show all','सब दिखाएँ'),
+ nextK:L('Next karma: ','अगला कर्म: '), toSum:L('Go to summary ↓','सार तालिका ↓'),
+ step:L('Step','चरण'), of:L('of','/'),
+ stepNames:[L('Name and meaning','नाम और अर्थ'),L('Soul quality it covers','आत्मा का कौन-सा गुण ढकता है'),L('Classic analogy','शास्त्रीय उपमा'),L('Sub-types','उत्तर प्रकृतियाँ'),L('Causes of bondage (Asrav)','बंध के कारण (आस्रव)'),L('Duration of bondage (Sthiti)','बंध की अवधि (स्थिति)'),L('Result when it ripens (Udaya)','उदय में फल'),L('How to shed it (Nirjara)','क्षय का उपाय (निर्जरा)')],
+ maxL:L('Maximum','उत्कृष्ट'), minL:L('Minimum','जघन्य'),
+ good:L('Binds the good type','शुभ प्रकृति का बंध'), bad:L('Binds the bad type','अशुभ प्रकृति का बंध'),
+ vCause:L('Causes (Asrav)','कारण (आस्रव)'), vBound:L('Karma bound (Bandh)','बँधा कर्म (बंध)'),
+ vCovers:L('Covers the soul quality','आत्मा का गुण जो ढकता है'), vTypes:L('Sub-types','उत्तर प्रकृतियाँ'),
+ vRes:L('Result (Udaya)','फल (उदय)'), vShed:L('Shedding (Nirjara)','क्षय (निर्जरा)'), vFree:L('Quality fully restored','गुण पूर्ण प्रकट'),
+ shedBtn:L('Shed the karma (Nirjara)','कर्म का क्षय करें (निर्जरा)'), coverBtn:L('Cover again','फिर से आवरण'),
+ veilLabel:L('Karma veil','कर्म-आवरण'),
+ tblK:[L('#','#'),L('Karma','कर्म'),L('Type','वर्ग'),L('Soul quality covered','ढका गुण'),L('Analogy','उपमा'),L('Sub-types','उत्तर प्रकृति'),L('Max duration','उत्कृष्ट स्थिति')],
+ tblG:[L('#','#'),L('Gunasthana','गुणस्थान'),L('Stage','अवस्था'),L('Karma status','कर्म स्थिति')],
+ gWhat:L('What happens','क्या होता है'), gKarma:L('Karma status','कर्म स्थिति'), gCat:L('Category','वर्ग'),
+ gprev:L('← Previous stage','← पिछला सोपान'), gnext:L('Next stage →','अगला सोपान →'),
+ cat:[L('Bahiratma (outer soul)','बहिरात्मा'),L('Antaratma (inner soul): 4th jaghanya, 5th–11th madhyam, 12th uttam','अंतरात्मा: चौथा जघन्य, 5वाँ–11वाँ मध्यम, 12वाँ उत्तम'),L('Paramatma (supreme soul)','परमात्मा')],
+ shreniH:L('Two ladders from the 8th stage','आठवें गुणस्थान से दो श्रेणियाँ'),
+ upa:L('Upashama Shreni: suppresses moha. It reaches the 11th stage, but moha rises again and the soul falls back (to 10th or lower).','उपशम श्रेणी: मोह को दबाती है। ग्यारहवें तक पहुँचती है, पर मोह फिर उदय में आता है और जीव नीचे गिरता है (दसवें या उससे नीचे)।'),
+ kshp:L('Kshapaka Shreni: destroys moha. It skips the 11th, goes 10th → 12th → 13th → 14th, with no falling back.','क्षपक श्रेणी: मोह का क्षय करती है। ग्यारहवें को लाँघकर दसवें → बारहवें → तेरहवें → चौदहवें तक जाती है; गिरने का भय नहीं।'),
+ samvar:L('Samvar: stopping the inflow','संवर: आस्रव का निरोध'),
+ samvarD:L('Tattvartha Sutra 9.2: through 3 Guptis, 5 Samitis, 10 Dharmas (Uttam Kshama etc.), 12 Anupreksha, 22 Parishaha-jaya and 5 Charitras, the door is closed. Samvar plus Nirjara together lead to Moksha.','तत्त्वार्थ सूत्र 9.2: 3 गुप्ति, 5 समिति, 10 धर्म (उत्तम क्षमा आदि), 12 अनुप्रेक्षा, 22 परीषहजय और 5 चारित्र से आस्रव का द्वार बंद होता है। संवर और निर्जरा मिलकर मोक्ष तक पहुँचाते हैं।')
+};
+
+/* ---------- master flow data ---------- */
+const MF=[
+ {t:L('Jiva (Soul)','जीव (आत्मा)'),sc:L('जीव','Jiva'),d:L('By nature the soul is infinite knowledge, perception, bliss and energy. But from beginningless time it is joined with karma-matter.','स्वभाव से आत्मा अनंत ज्ञान, दर्शन, सुख और वीर्य वाली है। पर अनादि काल से वह कर्म-पुद्गलों से जुड़ी है।')},
+ {t:L('Causes of Bondage','बंध के हेतु'),sc:L('बंध के हेतु','Bandh hetu'),d:L('Five causes: Mithyatva (wrong belief), Avirati (non-restraint), Pramad (carelessness), Kashaya (passions), and Yoga (activity of mind, speech and body). These open the door.','पाँच हेतु: मिथ्यात्व, अविरति, प्रमाद, कषाय और योग (मन-वचन-काया की प्रवृत्ति)। ये द्वार खोलते हैं।')},
+ {t:L('Asrav (Inflow)','आस्रव'),sc:L('आस्रव','Asrav'),d:L('Karma particles flow toward the soul, like water entering through a hole in a boat. Good activity (shubha yoga) brings Punya, bad activity (ashubha yoga) brings Papa. The soul\'s impure feeling is Bhavasrava; the inflow of karma-matter is Dravyasrava.','कर्म-कण आत्मा की ओर वैसे बहते हैं जैसे नाव के छेद से पानी। शुभ योग से पुण्य, अशुभ योग से पाप आता है। आत्मा का मलिन भाव भावास्रव है; कर्म-पुद्गलों का आना द्रव्यास्रव।')},
+ {t:L('Bandh (Bondage)','बंध'),sc:L('बंध','Bandh'),d:L('The particles bind to the soul in four ways:','कर्म-कण चार प्रकार से आत्मा से बँधते हैं:'),
+  chips:[L('Prakriti: nature (which of the 8 karmas)','प्रकृति: स्वभाव (आठ में कौन-सा कर्म)'),L('Sthiti: duration','स्थिति: अवधि'),L('Anubhag/Rasa: intensity of fruit','अनुभाग/रस: फल की तीव्रता'),L('Pradesh: quantity of particles','प्रदेश: कर्म-कणों की मात्रा')],
+  extra:L('Yoga decides Prakriti and Pradesh. Kashaya decides Sthiti and Anubhag. The soul\'s impure feeling is Bhava-bandh; the karma-matter that binds is Dravya-bandh.','योग से प्रकृति और प्रदेश बंध; कषाय से स्थिति और अनुभाग बंध होता है। आत्मा का रागादि भाव भाव-बंध है; बँधने वाले कर्म-पुद्गल द्रव्य-बंध।')},
+ {t:L('Satta (Existence)','सत्ता'),sc:L('सत्ता','Satta'),d:L('The bound karma stays in the soul, often unnoticed, until its time comes.','बँधा हुआ कर्म आत्मा में पड़ा रहता है, प्रायः अनजाने, जब तक उसका समय नहीं आता।')},
+ {t:L('Udaya (Fruition)','उदय'),sc:L('उदय','Udaya'),d:L('The karma ripens and the soul experiences its result. If the soul reacts with attachment or aversion, new karma is bound. If it stays equanimous, it is not.','कर्म पकता है और आत्मा उसका फल भोगती है। राग-द्वेष से प्रतिक्रिया करने पर नया कर्म बँधता है; समभाव रखने पर नहीं।')},
+ {t:L('Nirjara (Shedding)','निर्जरा'),sc:L('निर्जरा','Nirjara'),d:L('Karma falls away. Savipak nirjara is natural, on ripening. Avipak nirjara is by effort, through the 12 Tapas (6 external: anashana etc.; 6 internal: prayashchitta, vinaya, vaiyavritya, svadhyaya, vyutsarga, dhyana).','कर्म झड़ते हैं। सविपाक निर्जरा फल देकर स्वाभाविक रूप से होती है; अविपाक निर्जरा बारह तप (6 बाह्य: अनशन आदि; 6 आभ्यंतर: प्रायश्चित्त, विनय, वैयावृत्य, स्वाध्याय, व्युत्सर्ग, ध्यान) से प्रयत्नपूर्वक।')},
+ {t:L('Moksha (Liberation)','मोक्ष'),sc:L('मोक्ष','Moksha'),d:L('When all eight karmas are destroyed, the soul rises to Siddhashila, with the eight Siddha gunas fully manifest: Samyaktva, Jnana, Darshana, Agurulaghutva, Avagahanatva, Sukshmatva, Virya and Avyabadha.','आठों कर्मों का क्षय होने पर आत्मा सिद्धशिला पर विराजमान होती है, आठ सिद्ध-गुण पूर्ण प्रकट: सम्यक्त्व, ज्ञान, दर्शन, अगुरुलघुत्व, अवगाहनत्व, सूक्ष्मत्व, वीर्य और अव्याबाध।')}
+];
+
+/* ---------- karma data ---------- */
+const K=[
+{n:1,fam:'g',en:'Jnanavaraniya',dv:'ज्ञानावरणीय',
+ meaning:L('Knowledge-obscuring karma','ज्ञान को ढकने वाला कर्म'),
+ guna:L('Anant Jnan (infinite knowledge)','अनंत ज्ञान'),
+ analogy:L('A cloth (pat) covering the face of a deity\'s idol. The deity is there, but cannot be seen.','देव-प्रतिमा के मुख पर पड़ा पट (वस्त्र)। देव हैं, पर दिखाई नहीं देते।'),
+ types:{e:['Mati-jnanavaraniya (sensory knowledge)','Shruta-jnanavaraniya (scriptural knowledge)','Avadhi-jnanavaraniya (clairvoyance)','Manahparyaya-jnanavaraniya (telepathy)','Kevala-jnanavaraniya (omniscience)'],
+        h:['मति-ज्ञानावरणीय (इंद्रिय-मन का ज्ञान)','श्रुत-ज्ञानावरणीय (शास्त्र-ज्ञान)','अवधि-ज्ञानावरणीय (मर्यादित दिव्य ज्ञान)','मनःपर्यय-ज्ञानावरणीय (दूसरे के मन का ज्ञान)','केवल-ज्ञानावरणीय (सर्वज्ञता)']},count:'5',
+ causes:{e:['Pradosha: finding fault with true knowledge and its knowers, or withholding praise','Nihnava: concealing what one knows or one\'s teacher','Matsarya: envy; refusing to teach out of jealousy','Antaraya: obstructing another\'s learning','Asadana: disrespecting or hindering knowledge','Upaghata: destroying knowledge, or wrongly refuting it'],
+         h:['प्रदोष: सम्यग्ज्ञान और ज्ञानी में दोष देखना या प्रशंसा न करना','निह्नव: अपना ज्ञान या गुरु का नाम छिपाना','मात्सर्य: ईर्ष्यावश ज्ञान न देना','अंतराय: दूसरे के ज्ञानार्जन में बाधा','आसादन: ज्ञान की अविनय या अवहेलना','उपघात: ज्ञान का नाश या उसका मिथ्या खंडन']},
+ effect:L('Dullness, poor memory, ignorance, difficulty learning. Even the five senses and mind give only partial knowledge.','मंदबुद्धि, कमजोर स्मृति, अज्ञान, सीखने में कठिनाई। पाँच इंद्रियाँ और मन भी केवल अधूरा ज्ञान देते हैं।'),
+ shed:L('Study of scriptures (svadhyaya), respect for teachers, sharing knowledge, donating books. Kevala-jnan appears only when this karma is destroyed.','स्वाध्याय, गुरु-विनय, ज्ञान-दान, ग्रंथ-दान। इस कर्म के क्षय पर ही केवलज्ञान प्रकट होता है।'),
+ max:L('30 kodakodi sagaropam','30 कोड़ाकोड़ी सागरोपम'),min:L('Antarmuhurta (< 48 min)','अंतर्मुहूर्त (48 मिनट से कम)')},
+{n:2,fam:'g',en:'Darshanavaraniya',dv:'दर्शनावरणीय',
+ meaning:L('Perception-obscuring karma','दर्शन (सामान्य बोध) को ढकने वाला कर्म'),
+ guna:L('Anant Darshan (infinite perception)','अनंत दर्शन'),
+ analogy:L('A doorkeeper who will not let you see the king, even though the king is in the palace.','द्वारपाल, जो राजा महल में होने पर भी दर्शन नहीं करने देता।'),
+ types:{e:['Chakshu-darshanavaran (seeing by eye)','Achakshu-darshanavaran (perception by other senses and mind)','Avadhi-darshanavaran','Kevala-darshanavaran','Five Nidras (sleep): Nidra, Nidra-nidra, Prachala, Prachala-prachala, Styanagriddhi'],
+        h:['चक्षु-दर्शनावरण (आँख से देखना)','अचक्षु-दर्शनावरण (अन्य इंद्रिय और मन से बोध)','अवधि-दर्शनावरण','केवल-दर्शनावरण','पाँच निद्राएँ: निद्रा, निद्रा-निद्रा, प्रचला, प्रचला-प्रचला, स्त्यानगृद्धि']},count:'9',
+ causes:{e:['The same six as for Jnanavaraniya, directed at darshan (perception, vision, and those who have it):','Pradosha, Nihnava, Matsarya, Antaraya, Asadana, Upaghata','Obstructing or harming another\'s senses or sight'],
+         h:['ज्ञानावरणीय के समान छह कारण, पर दर्शन (बोध, दृष्टि और दृष्टिवानों) के प्रति:','प्रदोष, निह्नव, मात्सर्य, अंतराय, आसादन, उपघात','दूसरे की इंद्रिय या दृष्टि में बाधा या हानि पहुँचाना']},
+ effect:L('Blindness or weak senses, excessive sleep, dullness of awareness.','अंधत्व या इंद्रियों की दुर्बलता, अधिक नींद, सजगता में कमी।'),
+ shed:L('Respect for sages and Jin-darshan, alertness, reducing sleep and laziness, protecting the senses of others.','साधु-सेवा, जिन-दर्शन, जागरूकता, नींद-आलस्य में कमी, दूसरों की इंद्रियों की रक्षा।'),
+ max:L('30 kodakodi sagaropam','30 कोड़ाकोड़ी सागरोपम'),min:L('Antarmuhurta','अंतर्मुहूर्त')},
+{n:3,fam:'a',en:'Vedaniya',dv:'वेदनीय',
+ meaning:L('Feeling-producing karma','सुख-दुःख का अनुभव कराने वाला कर्म'),
+ guna:L('Avyabadh Sukh (undisturbed bliss)','अव्याबाध सुख'),
+ analogy:L('A sword smeared with honey. The first lick is sweet, but it cuts the tongue.','शहद लगी तलवार। पहला स्वाद मीठा, पर जीभ कट जाती है।'),
+ types:{e:['Sata-vedaniya (pleasant feeling)','Asata-vedaniya (painful feeling)'],h:['साता-वेदनीय (सुखद अनुभव)','असाता-वेदनीय (दुखद अनुभव)']},count:'2',
+ pair:{p:{e:['Anukampa: compassion for all beings, especially vratis (those with vows)','Dana (charity)','Sarag-samyama and other forms of restraint','Kshanti (forgiveness) and Shaucha (freedom from greed)'],h:['भूत-व्रती अनुकंपा: प्राणियों, विशेषकर व्रतियों पर करुणा','दान','सराग संयम आदि संयम','क्षांति (क्षमा) और शौच (लोभ-त्याग)']},
+       n:{e:['Duhkha, Shoka: causing pain or grief, in oneself or others','Tapa, Akrandana: tormenting, making others weep','Vadha: killing or injuring','Paridevana: causing lamentation'],h:['दुःख, शोक: अपने या दूसरों में पीड़ा या शोक उत्पन्न करना','ताप, आक्रंदन: संताप देना, रुलाना','वध: प्राणघात या चोट पहुँचाना','परिदेवन: विलाप कराना']}},
+ effect:L('Health, comfort and pleasure (sata), or disease, suffering and loss (asata). Both are bondage, because even pleasure is a subtle chain.','स्वास्थ्य, सुख-सुविधा (साता) या रोग, कष्ट, हानि (असाता)। दोनों बंधन हैं, क्योंकि सुख भी सूक्ष्म बेड़ी है।'),
+ shed:L('Equanimity (samata): meeting pleasure and pain without attachment or aversion. In the 13th Gunasthana Vedaniya is still present, but without Mohaniya it cannot produce real pleasure or pain.','समता: सुख-दुःख में राग-द्वेष रहित रहना। तेरहवें गुणस्थान में वेदनीय सत्ता में रहता है, पर मोहनीय के बिना सुख-दुःख का वास्तविक अनुभव नहीं करा पाता।'),
+ max:L('30 kodakodi sagaropam','30 कोड़ाकोड़ी सागरोपम'),min:L('12 muhurta (sata)','12 मुहूर्त (साता)')},
+{n:4,fam:'g',en:'Mohaniya',dv:'मोहनीय',
+ meaning:L('Deluding karma, the king of all karmas','मोहित करने वाला कर्म, सब कर्मों का राजा'),
+ guna:L('Samyaktva (right faith), and perfect conduct (Yathakhyat Charitra)','सम्यक्त्व (सम्यक् श्रद्धा) और यथाख्यात चारित्र'),
+ analogy:L('Wine or intoxication. A person loses discrimination and mistakes right for wrong.','मदिरा। मनुष्य विवेक खोकर उचित-अनुचित में भेद नहीं कर पाता।'),
+ types:{e:['Darshan-mohaniya (3): Mithyatva, Samyagmithyatva, Samyaktva','Charitra-mohaniya (25):','16 Kashayas: Krodh, Man, Maya, Lobh × 4 intensities (Anantanubandhi, Apratyakhyanavaran, Pratyakhyanavaran, Sanjvalan)','9 Nokashayas: Hasya, Rati, Arati, Shoka, Bhaya, Jugupsa and 3 Veds (Stri, Purusha, Napumsaka)'],
+        h:['दर्शन-मोहनीय (3): मिथ्यात्व, सम्यग्मिथ्यात्व, सम्यक्त्व','चारित्र-मोहनीय (25):','16 कषाय: क्रोध, मान, माया, लोभ × 4 तीव्रता (अनंतानुबंधी, अप्रत्याख्यानावरण, प्रत्याख्यानावरण, संज्वलन)','9 नोकषाय: हास्य, रति, अरति, शोक, भय, जुगुप्सा और 3 वेद (स्त्री, पुरुष, नपुंसक)']},count:'28',
+ causes:{e:['Avarnavada (false censure) of the Kevali, the Shruta (scripture), the Sangha, Dharma and Deva: binds Darshan-mohaniya','Tivra parinam (intense feelings) from the rise of Kashayas: binds Charitra-mohaniya','Accepting a false path or deity as true','Indulgence in sense pleasure, attachment and aversion'],
+         h:['केवली, श्रुत, संघ, धर्म और देव का अवर्णवाद (मिथ्या निंदा): दर्शन-मोहनीय का बंध','कषाय के उदय से तीव्र परिणाम: चारित्र-मोहनीय का बंध','असत्य मार्ग या देव को सत्य मानना','विषय-भोग, राग और द्वेष']},
+ effect:L('Wrong belief and delusion of the self, uncontrolled passions, attachment, ego. It is the root cause of the cycle of births.','मिथ्या श्रद्धा और आत्म-भ्रम, अनियंत्रित कषाय, आसक्ति, अहंकार। यह संसार-भ्रमण का मूल कारण है।'),
+ shed:L('First Samyaktva (right faith) through deep reflection and the guru\'s guidance. Then vows, restraint, and conquest of the four passions. In kshapak shreni it is completely destroyed by the end of the 10th Gunasthana.','पहले सम्यक्त्व: गहन चिंतन और गुरु-मार्गदर्शन से। फिर व्रत, संयम और चार कषायों पर विजय। क्षपक श्रेणी में दसवें गुणस्थान के अंत तक इसका पूर्ण क्षय हो जाता है।'),
+ max:L('70 kodakodi sagaropam','70 कोड़ाकोड़ी सागरोपम'),min:L('Antarmuhurta','अंतर्मुहूर्त')},
+{n:5,fam:'a',en:'Ayu',dv:'आयुष्य',
+ meaning:L('Life-span determining karma','जीवन-अवधि और गति निश्चित करने वाला कर्म'),
+ guna:L('Avagahanatva (capacity to give and take space without obstruction)','अवगाहनत्व (बिना बाधा स्थान देने-लेने की शक्ति)'),
+ analogy:L('A prison shackle. It holds you in one birth for a fixed term.','कारागार की बेड़ी। एक निश्चित अवधि तक एक भव में रोके रखती है।'),
+ types:{e:['Nark-ayu (hell being)','Tiryanch-ayu (animal and plant life)','Manushya-ayu (human)','Dev-ayu (celestial)'],h:['नरक-आयु','तिर्यंच-आयु (पशु-वनस्पति)','मनुष्य-आयु','देव-आयु']},count:'4',
+ causes:{e:['Hell: Bahvarambha-parigrahatva (heavy violence and possessions)','Animal: Maya (deceit)','Human: Alpa arambha-parigraha, and a gentle, straightforward nature (mardava, arjava)','Heavenly: Sarag-samyama, Samyamasamyama, Akama-nirjara, Bala-tapa; for Vaimanik gods, also Samyaktva'],
+         h:['नरक: बहु-आरंभ और बहु-परिग्रह (अत्यधिक हिंसा और संग्रह)','तिर्यंच: माया (छल-कपट)','मनुष्य: अल्पारंभ-परिग्रह, तथा स्वभाव की मृदुता और सरलता','देव: सराग संयम, संयमासंयम, अकाम निर्जरा, बालतप; वैमानिक देवों के लिए सम्यक्त्व भी']},
+ effect:L('The soul takes the next birth in the realm decided by its ayu, and stays for that duration. According to Gommatasara, the next ayu is bound in one of eight apakarsha-kals: the first at 2/3 of the present life, the next at 2/3 of what remains, and so on. If it is missed in all eight, it is bound just before the end of life.','आयु के अनुसार अगले भव की गति मिलती है और उतने समय वहाँ रहना होता है। गोम्मटसार के अनुसार अगली आयु आठ अपकर्ष-कालों में बँधती है: पहला वर्तमान आयु के दो-तिहाई भाग पर, अगला शेष के दो-तिहाई पर, इसी प्रकार। आठों में चूकने पर आयु के अंत से ठीक पहले बँधती है।'),
+ shed:L('Live with awareness and restraint, and avoid the causes of hell and animal births. Liberation comes when Ayu karma is exhausted at the end of the 14th Gunasthana.','जागरूकता और संयम से जीना, नरक और तिर्यंच के कारणों से बचना। चौदहवें गुणस्थान के अंत में आयु कर्म समाप्त होने पर मुक्ति मिलती है।'),
+ max:L('33 sagaropam','33 सागरोपम'),min:L('Antarmuhurta','अंतर्मुहूर्त')},
+{n:6,fam:'a',en:'Nama',dv:'नाम',
+ meaning:L('Body- and identity-determining karma','शरीर और पहचान निश्चित करने वाला कर्म'),
+ guna:L('Sukshmatva (subtle, formless state)','सूक्ष्मत्व (सूक्ष्म, अरूपी अवस्था)'),
+ analogy:L('A painter who paints a variety of forms. Body, shape, voice and looks are all sketched by Nama.','चित्रकार, जो भाँति-भाँति के रूप बनाता है। शरीर, आकार, स्वर और रूप सब नाम कर्म रचता है।'),
+ types:{e:['Shubh-nama (auspicious)','Ashubh-nama (inauspicious)','93 sub-types in all (Gommatasara): 14 Pinda-prakritis (65 sub-types: gati, jati, sharira, bandhana, sanghata, samsthana, angopanga, samhanana, sparsha, rasa, gandha, varna, anupurvi, vihayogati)','8 Pratyek: Agurulaghu, Upaghata, Paraghata, Atapa, Udyota, Ucchvasa, Nirmana, Tirthankara','10 Trasa-dashak (Trasa, Badara, Paryapta, Pratyeka-sharira, Sthira, Shubha, Subhaga, Susvara, Adeya, Yashahkirti) and 10 Sthavara-dashak (their opposites)'],
+        h:['शुभ नाम','अशुभ नाम','कुल 93 उत्तर प्रकृतियाँ (गोम्मटसार): 14 पिंड-प्रकृतियाँ (65 भेद: गति, जाति, शरीर, बंधन, संघात, संस्थान, अंगोपांग, संहनन, स्पर्श, रस, गंध, वर्ण, आनुपूर्वी, विहायोगति)','8 प्रत्येक प्रकृतियाँ: अगुरुलघु, उपघात, परघात, आतप, उद्योत, उच्छ्वास, निर्माण, तीर्थंकर','10 त्रस-दशक (त्रस, बादर, पर्याप्त, प्रत्येक शरीर, स्थिर, शुभ, सुभग, सुस्वर, आदेय, यशःकीर्ति) और 10 स्थावर-दशक (इनके विपरीत)']},count:'93',
+ pair:{p:{e:['Yoga-rjuta: straightness of mind, speech and body','Avisamvadana: harmony between word and deed, honesty','The Sixteen Karana Bhavanas (Darshana-vishuddhi etc.) bind Tirthankara-nama, the highest auspicious prakriti'],h:['योग-ऋजुता: मन-वचन-काया की सरलता','अविसंवादन: वचन और कर्म में एकता, सच्चाई','सोलह कारण भावनाएँ (दर्शन-विशुद्धि आदि) तीर्थंकर नाम कर्म का बंध कराती हैं, जो सर्वोच्च शुभ प्रकृति है']},
+       n:{e:['Yoga-vakrata: crookedness of mind, speech and body','Visamvadana: deceiving others; word and deed not matching'],h:['योग-वक्रता: मन-वचन-काया की कुटिलता','विसंवादन: दूसरों को धोखा देना; वचन और कर्म में अंतर']}},
+ effect:L('Type of body, appearance, voice, fame or infamy, a good or bad birth realm, strong or weak physique.','शरीर का प्रकार, रूप, स्वर, यश-अपयश, अच्छी-बुरी गति, मजबूत या कमजोर काया।'),
+ shed:L('Honesty in thought, word and deed. At Moksha the soul is Sukshma and formless (arupi), with no body at all.','मन-वचन-काया में सरलता। मोक्ष में आत्मा सूक्ष्म और अरूपी हो जाती है, शरीर नहीं रहता।'),
+ max:L('20 kodakodi sagaropam','20 कोड़ाकोड़ी सागरोपम'),min:L('8 muhurta','8 मुहूर्त')},
+{n:7,fam:'a',en:'Gotra',dv:'गोत्र',
+ meaning:L('Family- and status-determining karma','कुल और प्रतिष्ठा निश्चित करने वाला कर्म'),
+ guna:L('Agurulaghutva (neither high nor low)','अगुरुलघुत्व (न ऊँच, न नीच)'),
+ analogy:L('A potter making pots. Some pots are honoured on the head at a feast, others used for lowly purposes.','कुम्हार के घड़े। कुछ सिर पर रखकर पूजे जाते हैं, कुछ साधारण कामों में आते हैं।'),
+ types:{e:['Uccha-gotra (high lineage)','Nicha-gotra (low lineage)'],h:['उच्च गोत्र (प्रतिष्ठित कुल)','नीच गोत्र (साधारण कुल)']},count:'2',
+ pair:{p:{e:['Praising others and speaking of one\'s own faults (the reverse of the below)','Revealing others\' real virtues, concealing one\'s own','Nichair-vritti (humble conduct) and Anutsek (freedom from pride)'],h:['दूसरों की प्रशंसा और अपने दोषों का कथन (नीचे का विपरीत)','दूसरों के सच्चे गुण प्रकट करना, अपने छिपाना','नीचैर्वृत्ति (विनम्र आचरण) और अनुत्सेक (अहंकार का अभाव)']},
+       n:{e:['Para-ninda (criticising others) and Atma-prashamsa (praising oneself)','Hiding others\' real virtues, proclaiming one\'s own (even unreal) virtues','Pride in the 8 Madas: knowledge, worship/honour, family, caste, strength, riddhi, penance, body'],h:['पर-निंदा और आत्म-प्रशंसा','दूसरों के सद्गुण छिपाना, अपने (अविद्यमान भी) गुण प्रकट करना','आठ मद: ज्ञान, पूजा (प्रतिष्ठा), कुल, जाति, बल, ऋद्धि, तप, शरीर का अहंकार']}},
+ effect:L('Birth in a respected or lowly family, social honour or neglect. Note: it is about lineage of conduct and culture, not worth of the soul.','प्रतिष्ठित या साधारण कुल में जन्म, सम्मान या उपेक्षा। ध्यान रहे, यह आचार-संस्कृति की परंपरा है, आत्मा का मूल्य नहीं।'),
+ shed:L('Remove the 8 Madas. Treat all souls as equal, since in essence each soul is the same.','आठ मद त्यागें। सब आत्माओं को समान देखें, क्योंकि स्वरूप से हर आत्मा एक समान है।'),
+ max:L('20 kodakodi sagaropam','20 कोड़ाकोड़ी सागरोपम'),min:L('8 muhurta','8 मुहूर्त')},
+{n:8,fam:'g',en:'Antaraya',dv:'अन्तराय',
+ meaning:L('Obstructing karma','बाधा डालने वाला कर्म'),
+ guna:L('Anant Virya (infinite energy / power)','अनंत वीर्य (अनंत शक्ति)'),
+ analogy:L('A treasurer. The king wants to give, but the treasurer blocks the payment.','भंडारी। राजा देना चाहता है, पर भंडारी भुगतान रोक देता है।'),
+ types:{e:['Dan-antaraya (obstacle to giving)','Labh-antaraya (obstacle to gain)','Bhog-antaraya (to one-time enjoyment)','Upbhog-antaraya (to repeated enjoyment)','Virya-antaraya (obstacle to energy and effort)'],
+        h:['दान-अंतराय (देने में बाधा)','लाभ-अंतराय (प्राप्ति में बाधा)','भोग-अंतराय (एक बार भोगने में बाधा)','उपभोग-अंतराय (बार-बार भोगने में बाधा)','वीर्य-अंतराय (शक्ति और पुरुषार्थ में बाधा)']},count:'5',
+ causes:{e:['Obstructing others\' charity, gain or enjoyment','Discouraging the giver','Misusing power or wealth','Hindering good deeds and others\' efforts'],
+         h:['दूसरों के दान, लाभ या भोग में बाधा','दाता को हतोत्साहित करना','शक्ति या धन का दुरुपयोग','शुभ कार्य और दूसरों के प्रयास में रुकावट']},
+ effect:L('Unable to give despite wanting to, losing gains, never enjoying wealth, lack of energy for good deeds.','देने की इच्छा होकर भी न दे पाना, लाभ खो देना, धन का भोग न कर पाना, शुभ कार्य के लिए ऊर्जा की कमी।'),
+ shed:L('Generous giving (dana), helping others in their efforts, supporting dharma activities with energy. When it is destroyed along with the other three Ghati karmas, Kevala-jnan arises.','उदार दान, दूसरों के प्रयास में सहायता, धर्म-कार्यों में शक्ति से सहयोग। शेष तीन घाती कर्मों के साथ क्षय होने पर केवलज्ञान प्रकट होता है।'),
+ max:L('30 kodakodi sagaropam','30 कोड़ाकोड़ी सागरोपम'),min:L('Antarmuhurta','अंतर्मुहूर्त')}
+];
+
+/* ---------- gunasthana data ---------- */
+const G=[
+{n:1,cat:0,en:'Mithyatva (Mithyadrishti)',hi:'मिथ्यात्व (मिथ्यादृष्टि)',sh:L('Wrong belief','मिथ्या श्रद्धा'),
+ d:L('The soul does not know its true nature and takes the body to be the self. All beings begin here.','आत्मा अपने सच्चे स्वरूप को नहीं जानती और शरीर को ही "मैं" मानती है। सभी जीव यहीं से आरंभ करते हैं।'),
+ k:L('Mithyatva (the wrong-belief part of Darshan-mohaniya) is in udaya. Anantanubandhi kashaya is active.','मिथ्यात्व (दर्शन-मोहनीय का भेद) का उदय है। अनंतानुबंधी कषाय सक्रिय है।')},
+{n:2,cat:0,en:'Sasadana Samyagdrishti',hi:'सासादन सम्यग्दृष्टि',sh:L('Falling from samyaktva','सम्यक्त्व से पतन'),
+ d:L('The stage of a soul falling from Aupashamik Samyaktva: Anantanubandhi kashaya has risen, but Mithyatva has not yet. It lasts at least 1 samaya and at most 6 avalikas, then the soul drops to the 1st stage.','औपशमिक सम्यक्त्व से गिरती आत्मा की अवस्था: अनंतानुबंधी कषाय उदय में आ गई, पर मिथ्यात्व का उदय अभी नहीं हुआ। जघन्य एक समय, उत्कृष्ट छह आवलिका; फिर जीव पहले गुणस्थान में गिरता है।'),
+ k:L('Anantanubandhi kashaya has risen; Mithyatva has not yet risen.','अनंतानुबंधी कषाय का उदय हो गया; मिथ्यात्व का उदय अभी नहीं।')},
+{n:3,cat:0,en:'Samyagmithyatva (Mishra)',hi:'सम्यग्मिथ्यात्व (मिश्र)',sh:L('Mixed faith','मिश्र श्रद्धा'),
+ d:L('Faith is neither fully right nor fully wrong, like the taste of curd mixed with jaggery. It lasts an antarmuhurta. In this stage the soul neither binds ayu nor dies.','श्रद्धा न पूर्ण सच्ची, न पूर्ण झूठी, जैसे दही और गुड़ का मिला स्वाद। अंतर्मुहूर्त तक रहती है। इस अवस्था में न आयु का बंध होता है, न मरण।'),
+ k:L('The Samyagmithyatva prakriti of Darshan-mohaniya is in udaya.','दर्शन-मोहनीय की सम्यग्मिथ्यात्व प्रकृति का उदय रहता है।')},
+{n:4,cat:1,en:'Avirata Samyagdrishti',hi:'अविरत सम्यग्दृष्टि',sh:L('Right faith, no vows','सम्यक् श्रद्धा, व्रत नहीं'),
+ d:L('Right faith has dawned, in one of three forms: Aupashamik, Kshayopashamik or Kshayik. The soul knows the self is separate from the body, but because Apratyakhyanavaran kashaya is active it cannot keep vows. The true spiritual journey begins here.','सम्यक्त्व प्रकट हो गया है, तीन में से किसी रूप में: औपशमिक, क्षायोपशमिक या क्षायिक। आत्मा जानती है कि मैं शरीर से भिन्न हूँ, पर अप्रत्याख्यानावरण कषाय के उदय से व्रत नहीं ले पाती। सच्ची आध्यात्मिक यात्रा यहीं से शुरू होती है।'),
+ k:L('Seven prakritis (4 Anantanubandhi plus 3 Darshan-mohaniya) are suppressed, destroyed, or destroyed-and-suppressed, according to the type of samyaktva. Apratyakhyanavaran is in udaya.','सात प्रकृतियाँ (4 अनंतानुबंधी और 3 दर्शन-मोहनीय) सम्यक्त्व के प्रकार के अनुसार उपशांत, क्षीण या क्षयोपशमित। अप्रत्याख्यानावरण का उदय है।')},
+{n:5,cat:1,en:'Desavirata (Samyamasamyama)',hi:'देशविरत (संयमासंयम)',sh:L('Partial restraint','आंशिक संयम'),
+ d:L('The householder (shravak) keeps the 12 vratas (5 anuvrata, 3 gunavrata, 4 shikshavrata) and rises through the 11 Pratimas. Restraint is partial: he is both restrained and unrestrained (samyamasamyama).','श्रावक बारह व्रत (5 अणुव्रत, 3 गुणव्रत, 4 शिक्षाव्रत) पालता है और ग्यारह प्रतिमाओं पर चढ़ता है। संयम आंशिक है: वह संयत भी है और असंयत भी (संयमासंयम)।'),
+ k:L('Apratyakhyanavaran kashaya has subsided. Pratyakhyanavaran is in udaya.','अप्रत्याख्यानावरण कषाय शांत। प्रत्याख्यानावरण का उदय है।')},
+{n:6,cat:1,en:'Pramatta Virata (Pramatta Sanyata)',hi:'प्रमत्तविरत (प्रमत्त संयत)',sh:L('Muni with some pramad','मुनि, कुछ प्रमाद सहित'),
+ d:L('The Digambar muni keeps the 28 Mulagunas (5 mahavratas, 5 samitis, 5 indriya-nirodha, 6 avashyakas, and 7 others: lochha, achelakatva, asnana, bhumi-shayana, adantadhavana, sthiti-bhojana, eka-bhukti). Lapses into the 15 Pramadas now and then: 4 vikathas, 4 kashayas, 5 senses, sleep, and sneha.','दिगंबर मुनि 28 मूलगुणों का पालन करते हैं (5 महाव्रत, 5 समिति, 5 इंद्रिय-निरोध, 6 आवश्यक और 7 अन्य: केशलोंच, अचेलकत्व, अस्नान, भूमिशयन, अदंतधावन, स्थितिभोजन, एकभुक्ति)। बीच-बीच में 15 प्रमाद आ जाते हैं: 4 विकथा, 4 कषाय, 5 इंद्रिय, निद्रा और स्नेह।'),
+ k:L('Pratyakhyanavaran kashaya has subsided. Sanjvalan kashaya and nokashaya remain in udaya.','प्रत्याख्यानावरण कषाय शांत। संज्वलन कषाय और नोकषाय का उदय रहता है।')},
+{n:7,cat:1,en:'Apramatta Virata (Apramatta Sanyata)',hi:'अप्रमत्तविरत (अप्रमत्त संयत)',sh:L('Muni free of pramad','प्रमाद-रहित मुनि'),
+ d:L('The muni is free from pramad and absorbed in meditation. It has two forms: Svasthana apramatta (swinging between the 6th and 7th stages many times) and Satishaya apramatta (preparing to climb a shreni).','मुनि प्रमाद-रहित होकर ध्यान में लीन रहते हैं। इसके दो रूप हैं: स्वस्थान अप्रमत्त (छठे-सातवें में अनेक बार आना-जाना) और सातिशय अप्रमत्त (श्रेणी चढ़ने की तैयारी)।'),
+ k:L('Only Sanjvalan kashaya and nokashaya remain, in mild form.','केवल संज्वलन कषाय और नोकषाय मंद रूप में शेष।')},
+{n:8,cat:1,en:'Apurvakarana',hi:'अपूर्वकरण',sh:L('Unprecedented purity','अपूर्व विशुद्धि'),
+ d:L('Every moment brings new thoughts of a purity never known before. Special processes begin: Gunashreni nirjara, Gunasankramana, Sthitikhandana and Anubhagakhandana. According to the ladder (shreni) the soul is about to climb, it is called Upashamaka or Kshapaka.','प्रत्येक क्षण ऐसी नई शुद्धता के भाव आते हैं जो पहले कभी नहीं हुए। गुणश्रेणी निर्जरा, गुणसंक्रमण, स्थितिखंडन और अनुभागखंडन की विशेष प्रक्रियाएँ शुरू होती हैं। जिस श्रेणी पर चढ़ना है उसके अनुसार जीव उपशमक या क्षपक कहलाता है।'),
+ k:L('No moha is suppressed or destroyed yet, but the soul is preparing for it. Karmas are rapidly reduced in duration and intensity.','अभी मोह का उपशम या क्षय नहीं हुआ, पर उसकी तैयारी चल रही है। कर्मों की स्थिति और अनुभाग तेज़ी से घटते हैं।')},
+{n:9,cat:1,en:'Anivrittikarana',hi:'अनिवृत्तिकरण',sh:L('Equal purity, no return','समान विशुद्धि, अनिवृत्ति'),
+ d:L('All souls in this stage at the same moment have equal purity of thought. In Kshapaka shreni the soul destroys, in order: 16 prakritis (including Styanagriddhi, Nidranidra, Prachalaprachala) and the eight Apratyakhyanavaran and Pratyakhyanavaran kashayas; then Napumsaka-veda, Stri-veda, six nokashayas, Purusha-veda, and Sanjvalan krodh, man and maya.','इस अवस्था में एक ही समय के सभी जीवों की विशुद्धि समान होती है। क्षपक श्रेणी में जीव क्रम से नष्ट करता है: 16 प्रकृतियाँ (स्त्यानगृद्धि, निद्रानिद्रा, प्रचलाप्रचला आदि) और अप्रत्याख्यानावरण-प्रत्याख्यानावरण की आठ कषायें; फिर नपुंसकवेद, स्त्रीवेद, छह नोकषाय, पुरुषवेद, और संज्वलन क्रोध, मान, माया।'),
+ k:L('Only Sanjvalan lobh remains (in Kshapaka shreni). In Upashama shreni these are only suppressed.','केवल संज्वलन लोभ शेष (क्षपक श्रेणी में)। उपशम श्रेणी में ये केवल दबते हैं।')},
+{n:10,cat:1,en:'Sukshma Sampraya',hi:'सूक्ष्मसांपराय',sh:L('Only subtle greed','केवल सूक्ष्म लोभ'),
+ d:L('Only the subtlest greed (Sukshma lobh) remains, like the faint colour left in a washed cloth.','केवल लोभ का अत्यंत सूक्ष्म अंश शेष रहता है, जैसे धुले कपड़े में हल्का रंग।'),
+ k:L('In Kshapaka shreni, even this is destroyed by the end of the stage. In Upashama shreni it is only suppressed.','क्षपक श्रेणी में इस अवस्था के अंत तक यह भी नष्ट हो जाता है। उपशम श्रेणी में केवल दबता है।')},
+{n:11,cat:1,en:'Upashanta Kashaya (Vitaraga Chadmastha)',hi:'उपशांत कषाय (वीतराग छद्मस्थ)',sh:L('Moha suppressed','मोह उपशांत'),
+ d:L('All Mohaniya is suppressed, like mud settled at the bottom of clear water. The soul is Vitaraga but still Chadmastha, since it has not attained Kevala-jnan. It lasts at most an antarmuhurta, after which moha rises and the soul falls. Reached only through Upashama shreni.','सारा मोहनीय उपशांत है, जैसे स्वच्छ जल के तल में बैठी कीचड़। आत्मा वीतराग है पर छद्मस्थ है, क्योंकि केवलज्ञान नहीं हुआ। अधिकतम अंतर्मुहूर्त; फिर मोह उदय में आता है और जीव गिरता है। केवल उपशम श्रेणी से पहुँचते हैं।'),
+ k:L('Mohaniya is suppressed, not destroyed. Its rise means a certain fall.','मोहनीय दबा है, नष्ट नहीं हुआ। उसके उदय से पतन निश्चित है।')},
+{n:12,cat:1,en:'Kshina Kashaya (Vitaraga Chadmastha)',hi:'क्षीण कषाय (वीतराग छद्मस्थ)',sh:L('Moha destroyed','मोह नष्ट'),
+ d:L('Mohaniya is completely destroyed. The soul is Vitaraga but still Chadmastha for an antarmuhurta. In the penultimate samaya Nidra and Prachala are destroyed; at the last samaya the remaining 14 prakritis (5 + 4 + 5) are destroyed and Kevala-jnan dawns.','मोहनीय का पूर्ण क्षय हो चुका। आत्मा वीतराग है पर अंतर्मुहूर्त तक छद्मस्थ। उपांत्य समय में निद्रा और प्रचला नष्ट होती हैं; अंतिम समय में शेष 14 प्रकृतियाँ (5 + 4 + 5) नष्ट होकर केवलज्ञान प्रकट होता है।'),
+ k:L('Mohaniya is gone. At the end: 5 Jnanavaraniya, 4 Darshanavaraniya and 5 Antaraya prakritis are destroyed (Nidra and Prachala just before).','मोहनीय नष्ट। अंत में 5 ज्ञानावरणीय, 4 दर्शनावरणीय और 5 अंतराय प्रकृतियों का क्षय (निद्रा और प्रचला उससे ठीक पहले)।')},
+{n:13,cat:2,en:'Sayoga Kevali',hi:'सयोगकेवली',sh:L('Omniscient, with activity','सर्वज्ञ, योग सहित'),
+ d:L('The Arihant has the nine Kevala-labdhis (infinite knowledge, perception, dana, labha, bhoga, upabhoga, virya, plus Kshayik samyaktva and charitra) and teaches through Divyadhvani. Yoga continues, but with no kashaya the only asrava is a one-samaya Iryapath asrava of Sata-vedaniya. This stage can last up to slightly less than a Purva-koti of years.','अरिहंत को नौ केवललब्धियाँ हैं (अनंत ज्ञान, दर्शन, दान, लाभ, भोग, उपभोग, वीर्य, तथा क्षायिक सम्यक्त्व और चारित्र) और वे दिव्यध्वनि से उपदेश देते हैं। योग चालू है, पर कषाय न होने से केवल साता-वेदनीय का एक समय का ईर्यापथ आस्रव होता है। यह अवस्था कुछ कम पूर्व कोटि वर्ष तक रह सकती है।'),
+ k:L('The four Ghati karmas are destroyed. The Aghati karmas (Vedaniya, Ayu, Nama, Gotra) remain.','चारों घाती कर्म नष्ट। अघाती कर्म (वेदनीय, आयु, नाम, गोत्र) शेष।')},
+{n:14,cat:2,en:'Ayogi Kevali',hi:'अयोगकेवली',sh:L('Omniscient, no activity','सर्वज्ञ, योग रहित'),
+ d:L('All yoga ceases. The stage lasts only as long as it takes to say five short syllables (a, i, u, ṛ, ḷ). In its penultimate samaya 72 prakritis are destroyed and in the last samaya 13 more, 85 in all. The soul then rises to Siddhashila as a Siddha.','सारा योग रुक जाता है। यह अवस्था केवल पाँच ह्रस्व अक्षर (अ, इ, उ, ऋ, ऌ) बोलने जितनी होती है। उपांत्य समय में 72 और अंतिम समय में 13, कुल 85 प्रकृतियाँ नष्ट होती हैं। फिर आत्मा सिद्ध रूप में सिद्धशिला पर पहुँचती है।'),
+ k:L('The Aghati karmas are destroyed (85 prakritis in satta). All eight karmas are gone: Moksha.','अघाती कर्म नष्ट (सत्ता की 85 प्रकृतियाँ)। आठों कर्मों का क्षय: मोक्ष।')}
+];
+
+/* ---------- state ---------- */
+let cur=0,shown=1,mode='steps',gcur=0,veilOff=false;
+const $=id=>document.getElementById(id);
+const nm=k=>lang==='hi'?k.dv:k.en;
+const nm2=k=>lang==='hi'?k.en:k.dv;
+
+/* ---------- SVG: master flow ---------- */
+function masterSvg(){
+  const W=560,nw=240,nh=62,gx=40,gy=40,x=[20,300];
+  const pos=[[0,0],[1,0],[1,1],[0,1],[0,2],[1,2],[1,3],[0,3]];
+  const cls=['','','','acc','','','ok','ok'];
+  const H=20+4*(nh+gy)-gy+20;
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="${W}" role="img" aria-label="Karma flow"><defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="sarrowhead"/></marker></defs>`;
+  const c=(i)=>({x:x[pos[i][0]],y:20+pos[i][1]*(nh+gy)});
+  for(let i=0;i<7;i++){
+    const a=c(i),b=c(i+1);let d;
+    if(a.y===b.y){const goR=b.x>a.x;d=`M${goR?a.x+nw:a.x} ${a.y+nh/2}L${goR?b.x:b.x+nw} ${b.y+nh/2}`}
+    else d=`M${a.x+nw/2} ${a.y+nh}L${b.x+nw/2} ${b.y}`;
+    s+=`<path d="${d}" class="sl" marker-end="url(#ah)"/>`;
+  }
+  // samvar side-note off Asrav: dashed loop to left of node 2 -> text
+  const as=c(2);
+  MF.forEach((m,i)=>{
+    const p=c(i);
+    s+=`<g onclick="openMF(${i})"><rect class="sn ${cls[i]}" x="${p.x}" y="${p.y}" width="${nw}" height="${nh}" rx="12"/>
+      <text class="st" x="${p.x+nw/2}" y="${p.y+27}" text-anchor="middle">${i+1}. ${esc(T(m.t))}</text>
+      <text class="st2" x="${p.x+nw/2}" y="${p.y+46}" text-anchor="middle">${esc(T(m.sc))}</text></g>`;
+  });
+  // Samvar block
+  s+=`</svg>`;
+  return s;
+}
+function openMF(i){
+  const nodes=document.querySelectorAll('#masterflow .node');
+  nodes.forEach((n,j)=>n.classList.toggle('open',j===i));
+  nodes[i].scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+/* ---------- SVG: tree ---------- */
+function treeSvg(){
+  const W=760,H=360;
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="${W}" style="min-width:640px" role="img">`;
+  s+=`<path class="sl m" d="M380 46V64M190 64H570M190 64V84M570 64V84"/>`;
+  s+=`<rect class="sn acc" x="300" y="8" width="160" height="38" rx="10"/><text class="st" x="380" y="32" text-anchor="middle">${esc(T(UI.root))}</text>`;
+  [['g',190,UI.ghatiLong,K.filter(k=>k.fam==='g')],['a',570,UI.aghatiLong,K.filter(k=>k.fam==='a')]].forEach(([f,cx,lab,list])=>{
+    s+=`<rect class="sn ${f}" x="${cx-150}" y="84" width="300" height="38" rx="10" style="cursor:default"/><text class="st" x="${cx}" y="108" text-anchor="middle">${esc(T(lab))}</text>`;
+    s+=`<path class="sl m" d="M${cx-150} 103H${cx-165}V${150+3*54+22}M${cx-165} 150H${cx-150}"/>`;
+    list.forEach((k,i)=>{
+      const y=140+i*54;
+      s+=`<path class="sl m" d="M${cx-165} ${y+22}H${cx-150}"/>
+      <g onclick="pick(${k.n-1},true)"><rect class="sn ${f}" x="${cx-150}" y="${y}" width="300" height="44" rx="10"/>
+      <text class="st" x="${cx-136}" y="${y+19}">${k.n}. ${esc(nm(k))}</text>
+      <text class="st2" x="${cx-136}" y="${y+36}">${esc(T(k.guna).replace(/\s*\(.*\)/,''))}</text></g>`;
+    });
+  });
+  s+=`</svg>`;
+  return s;
+}
+
+/* ---------- master list ---------- */
+function masterList(){
+  const mf=$('masterflow');mf.innerHTML='';
+  MF.forEach((m,i)=>{
+    const d=document.createElement('div');d.className='node';
+    d.innerHTML=`<h3><span>${i+1}. ${esc(T(m.t))}</span><small>${esc(T(m.sc))}</small></h3>
+    <div class="more">${esc(T(m.d))}${m.chips?`<div class="chips">${m.chips.map(c=>`<span class="chip">${esc(T(c))}</span>`).join('')}</div><p style="margin:8px 0 0">${esc(T(m.extra))}</p>`:''}</div>`;
+    d.onclick=()=>d.classList.toggle('open');
+    mf.appendChild(d);
+    if(i===2){
+      const a=document.createElement('div');a.className='arrow';a.textContent='↓';mf.appendChild(a);
+      const g=document.createElement('div');g.className='gate';
+      g.innerHTML=`<b>${esc(T(UI.samvar))}</b><br>${esc(T(UI.samvarD))}`;mf.appendChild(g);
+    }
+    if(i<MF.length-1){const a=document.createElement('div');a.className='arrow';a.textContent='↓';mf.appendChild(a)}
+  });
+}
+
+/* ---------- karma explorer ---------- */
+function buildTabs(){
+  const tabs=$('tabs');tabs.innerHTML='';
+  K.forEach((k,i)=>{
+    const b=document.createElement('button');b.className='tab '+k.fam+(i===cur?' on':'');
+    b.innerHTML=`<span class="n">${k.n}</span>${esc(nm(k))}`;b.onclick=()=>pick(i);tabs.appendChild(b);
+  });
+}
+function buildSteps(k){
+  const s=[];
+  s.push(`<b>${esc(nm(k))}</b> <span style="color:var(--muted)">(${esc(nm2(k))})</span>: ${esc(T(k.meaning))}.`);
+  s.push(`<b>${esc(T(k.guna))}</b>`);
+  s.push(esc(T(k.analogy)));
+  s.push(ulist(TL(k.types)));
+  s.push(causesHtml(k));
+  s.push(`${T(UI.maxL)}: <b>${esc(T(k.max))}</b><br>${T(UI.minL)}: <b>${esc(T(k.min))}</b>`);
+  s.push(esc(T(k.effect)));
+  s.push(esc(T(k.shed)));
+  return s;
+}
+function causesHtml(k){
+  if(k.pair) return `<div class="pair"><div class="p"><b>${T(UI.good)}</b>${ulist(TL(k.pair.p))}</div><div class="n"><b>${T(UI.bad)}</b>${ulist(TL(k.pair.n))}</div></div>`;
+  return ulist(TL(k.causes));
+}
+function veilSvg(k){
+  const ray=[...Array(12)].map((_,i)=>{const a=i*Math.PI/6;return `<line x1="${110+44*Math.cos(a)}" y1="${75+44*Math.sin(a)}" x2="${110+60*Math.cos(a)}" y2="${75+60*Math.sin(a)}" stroke="var(--gold)" stroke-width="3" stroke-linecap="round"/>`}).join('');
+  return `<svg viewBox="0 0 220 150" role="img">${ray}<circle cx="110" cy="75" r="38" fill="var(--gold)"/>
+  <text x="110" y="79" text-anchor="middle" font-size="13" font-weight="700" fill="#3a2a00">${lang==='hi'?'आत्मा':'Soul'}</text>
+  <g class="veil"><rect x="30" y="38" width="160" height="74" rx="30" fill="${k.fam==='g'?'var(--ghati)':'var(--aghati)'}" opacity=".88"/>
+  <text x="110" y="72" text-anchor="middle" font-size="12" fill="#fff">${esc(T(UI.veilLabel))}</text>
+  <text x="110" y="92" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">${esc(nm(k))}</text></g></svg>`;
+}
+function visualHtml(k){
+  const cause=k.pair?`<div class="pair"><div class="p"><b>${T(UI.good)}</b>${ulist(TL(k.pair.p))}</div><div class="n"><b>${T(UI.bad)}</b>${ulist(TL(k.pair.n))}</div></div>`:ulist(TL(k.causes));
+  const types=TL(k.types).map(x=>`<span>${esc(x)}</span>`).join('');
+  return `<div class="vf">
+    <div class="vn cause"><h5>${T(UI.vCause)}</h5>${cause}</div><div class="varrow">↓</div>
+    <div class="vn main"><b>${esc(nm(k))}</b> · ${esc(nm2(k))}<br><small>${esc(T(k.meaning))} · ${k.count} ${T(UI.vTypes).toLowerCase()}</small></div><div class="varrow">↓</div>
+    <div class="vn"><div class="vmid"><div class="veilbox ${veilOff?'off':''}" id="veilbox">${veilSvg(k)}<div style="font-size:13px;margin-top:2px"><b>${esc(T(k.guna))}</b></div>
+       <button class="btn ghost" style="margin-top:6px;font-size:13px;padding:5px 10px" id="veilbtn">${T(veilOff?UI.coverBtn:UI.shedBtn)}</button></div>
+       <div><h5 style="margin:0 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--accent)">${T(UI.vTypes)}</h5><div class="vchips">${types}</div>
+       <p style="margin:10px 0 0;font-size:14px"><i>${esc(T(k.analogy))}</i></p>
+       <p style="margin:6px 0 0;font-size:13.5px;color:var(--muted)">${T(UI.maxL)}: ${esc(T(k.max))} · ${T(UI.minL)}: ${esc(T(k.min))}</p></div></div></div>
+    <div class="varrow">↓</div>
+    <div class="vn res"><h5>${T(UI.vRes)}</h5>${esc(T(k.effect))}</div><div class="varrow">↓</div>
+    <div class="vn shed"><h5>${T(UI.vShed)}</h5>${esc(T(k.shed))}</div><div class="varrow">↓</div>
+    <div class="vn main" style="background:var(--good-soft);border-color:var(--good)">✓ ${T(UI.vFree)}: <b>${esc(T(k.guna))}</b></div></div>`;
+}
+function renderPanel(){
+  const k=K[cur];
+  const head=`<div class="khead"><h3>${k.n}. ${esc(nm(k))} <span style="color:var(--muted);font-weight:400">· ${esc(nm2(k))}</span></h3>
+    <span class="badge ${k.fam}">${T(k.fam==='g'?UI.ghati:UI.aghati)}</span></div>
+    <div class="seg"><button id="mSteps" class="${mode==='steps'?'on':''}">${T(UI.modeSteps)}</button><button id="mVis" class="${mode==='visual'?'on':''}">${T(UI.modeVis)}</button></div>`;
+  let body;
+  if(mode==='visual') body=visualHtml(k)+`<div class="ctrl"><button class="btn ghost" id="nk"></button></div>`;
+  else{
+    const S=buildSteps(k);
+    body=`<div class="steps">${S.map((h,i)=>`${i?`<div class="sarrow" data-i="${i}">↓</div>`:''}
+      <div class="step" data-i="${i}"><div class="snum">${i+1}</div><div><h4>${T(UI.stepNames[i])}</h4><div class="body">${h}</div></div></div>`).join('')}</div>
+    <div class="bar"><i id="bari"></i></div>
+    <div class="ctrl"><button class="btn ghost" id="prev">${T(UI.back)}</button><button class="btn" id="next">${T(UI.next)}</button>
+      <button class="btn ghost" id="all">${T(UI.all)}</button><button class="btn ghost" id="nk"></button><span class="prog" id="prog"></span></div>`;
+  }
+  $('panel').innerHTML=head+body;
+  $('mSteps').onclick=()=>{mode='steps';renderPanel()};
+  $('mVis').onclick=()=>{mode='visual';renderPanel()};
+  const nk=$('nk');nk.textContent=cur<7?T(UI.nextK)+nm(K[cur+1])+' →':T(UI.toSum);
+  nk.onclick=()=>{if(cur<7)pick(cur+1);else location.hash='#guna'};
+  if(mode==='visual'){
+    $('veilbtn').onclick=()=>{veilOff=!veilOff;$('veilbox').classList.toggle('off',veilOff);$('veilbtn').textContent=T(veilOff?UI.coverBtn:UI.shedBtn)};
+  }else{
+    const N=8;
+    $('prev').onclick=()=>{shown=Math.max(1,shown-1);upd()};
+    $('next').onclick=()=>{shown=Math.min(N,shown+1);upd()};
+    $('all').onclick=()=>{shown=N;upd()};
+    upd();
+  }
+}
+function upd(){
+  const N=8,p=$('panel');
+  p.querySelectorAll('.step').forEach(e=>e.classList.toggle('show',+e.dataset.i<shown));
+  p.querySelectorAll('.sarrow').forEach(e=>e.classList.toggle('show',+e.dataset.i<shown));
+  $('prev').disabled=shown<=1;$('next').disabled=shown>=N;
+  $('prog').textContent=`${T(UI.step)} ${shown} ${T(UI.of)} ${N}`;
+  $('bari').style.width=(shown/N*100)+'%';
+}
+function pick(i,scroll){
+  cur=i;shown=1;veilOff=false;buildTabs();renderPanel();
+  if(scroll)$('eight').scrollIntoView({behavior:'smooth'});
+}
+
+/* ---------- gunasthana ---------- */
+function gname(g){return lang==='hi'?g.hi:g.en}
+function gname2(g){return lang==='hi'?g.en:g.hi}
+function renderGuna(){
+  $('stair').innerHTML=G.map((g,i)=>`<button class="b${g.cat+1}${i===gcur?' on':''}" style="height:${70+i*19}px" onclick="gpick(${i})" aria-label="${g.n}"><b>${g.n}</b><span>${esc(T(g.sh))}</span></button>`).join('');
+  $('legend').innerHTML=UI.cat.map((c,i)=>`<span><i style="background:var(--${['ghati-soft','accent-soft','good-soft'][i]})"></i>${esc(T(c))} (${['1–3','4–12','13–14'][i]})</span>`).join('');
+  const g=G[gcur];
+  $('gdetail').innerHTML=`<h3>${g.n}. ${esc(gname(g))} <span style="color:var(--muted);font-weight:400;font-size:16px">· ${esc(gname2(g))}</span></h3>
+   <div class="row"><b>${T(UI.gCat)}</b>${esc(T(UI.cat[g.cat]))}</div>
+   <div class="row"><b>${T(UI.gWhat)}</b>${esc(T(g.d))}</div>
+   <div class="row"><b>${T(UI.gKarma)}</b>${esc(T(g.k))}</div>`;
+  $('gprev').textContent=T(UI.gprev);$('gnext').textContent=T(UI.gnext);
+  $('gprev').disabled=gcur===0;$('gnext').disabled=gcur===13;
+  $('gprog').textContent=`${gcur+1} / 14`;
+  $('shreni').innerHTML=`<h3 style="margin:0 0 6px;font-size:17px">${esc(T(UI.shreniH))}</h3>
+   <p style="margin:4px 0"><b style="color:var(--ghati)">↗</b> ${esc(T(UI.upa))}</p><p style="margin:4px 0"><b style="color:var(--good)">↗</b> ${esc(T(UI.kshp))}</p>`;
+  $('gtbl').innerHTML=`<tr>${UI.tblG.map(h=>`<th>${esc(T(h))}</th>`).join('')}</tr>`+
+    G.map((g,i)=>`<tr style="cursor:pointer" onclick="gpick(${i},true)"><td>${g.n}</td><td><b>${esc(gname(g))}</b><br><span style="color:var(--muted)">${esc(gname2(g))}</span></td><td>${esc(T(g.sh))}</td><td>${esc(T(g.k))}</td></tr>`).join('');
+}
+function gpick(i,scroll){gcur=i;renderGuna();if(scroll)$('guna').scrollIntoView({behavior:'smooth'})}
+$('gprev').onclick=()=>gpick(Math.max(0,gcur-1));
+$('gnext').onclick=()=>gpick(Math.min(13,gcur+1));
+
+/* ---------- table ---------- */
+function renderTable(){
+  $('tbl').innerHTML=`<tr>${UI.tblK.map(h=>`<th>${esc(T(h))}</th>`).join('')}</tr>`+
+   K.map(k=>`<tr><td class="${k.fam}">${k.n}</td><td><b>${esc(nm(k))}</b><br><span style="color:var(--muted)">${esc(nm2(k))}</span></td><td>${T(k.fam==='g'?UI.ghati:UI.aghati)}</td><td>${esc(T(k.guna).replace(/\s*\(.*\)/,''))}</td><td>${esc(T(k.analogy).split(/[.।]/)[0])}</td><td>${k.count}</td><td>${esc(T(k.max))}</td></tr>`).join('');
+}
+
+function renderTable2(){
+  const c=[[5,5,5],[9,9,9],[2,2,2],[28,28,26],[4,4,4],[93,67,67],[2,2,2],[5,5,5]];
+  const tot=[0,1,2].map(j=>c.reduce((a,r)=>a+r[j],0));
+  $('tbl2').innerHTML=`<tr>${UI.tbl2.map(h=>`<th>${esc(T(h))}</th>`).join('')}</tr>`+
+    K.map((k,i)=>`<tr><td class="${k.fam}"><b>${k.n}. ${esc(nm(k))}</b></td><td>${c[i][0]}</td><td>${c[i][1]}</td><td>${c[i][2]}</td></tr>`).join('')+
+    `<tr><td><b>${lang==='hi'?'कुल':'Total'}</b></td><td><b>${tot[0]}</b></td><td><b>${tot[1]}</b></td><td><b>${tot[2]}</b></td></tr>`;
+}
+/* ---------- global render ---------- */
+function renderAll(){
+  document.documentElement.lang=lang==='hi'?'hi':'en';
+  document.title=lang==='hi'?'कर्म सिद्धांत – आठ कर्म और चौदह गुणस्थान':'Karma Siddhant – Eight Karmas and 14 Gunasthanas';
+  $('bEn').classList.toggle('on',lang==='en');$('bHi').classList.toggle('on',lang==='hi');
+  $('homelink').textContent=lang==='hi'?'← मुख पृष्ठ':'← Home';
+  $('title').textContent=T(UI.title);$('tag').textContent=T(UI.tag);
+  $('nav').innerHTML=['flow','tree','eight','guna','table'].map((id,i)=>`<a href="#${id}">${esc(T(UI.nav[i]))}</a>`).join('');
+  ['h1','s1','h2','s2','h3','s3','h4','s4','h5','s5'].forEach(id=>$(id).textContent=T(UI[id]));
+  $('foot').textContent=T(UI.foot);$('h6').textContent=T(UI.h6);$('s6').textContent=T(UI.s6);
+  $('masterSvg').innerHTML=masterSvg();
+  masterList();
+  $('treeSvg').innerHTML=treeSvg();
+  buildTabs();renderPanel();renderGuna();renderTable();renderTable2();
+}
+function setLang(l){lang=l;try{localStorage.setItem('ks_lang',l)}catch(_){}renderAll()}
+$('bEn').onclick=()=>setLang('en');$('bHi').onclick=()=>setLang('hi');
+$('bTheme').onclick=()=>{
+  const r=document.documentElement;
+  const dark=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches;
+  r.dataset.theme=dark?'light':'dark';
+};
+renderAll();
+</script>
+</body>
+</html>
